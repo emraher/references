@@ -1,9 +1,6 @@
 ---
 title: "My BibTeX database"
-author: "Thomas J. Leeper"
-output:
-  md_document:
-    variant: markdown_github
+author: "Emrah Er"
 ---
 
 ```{r setup, echo = FALSE, results="hide"}
@@ -51,7 +48,7 @@ ggplot(dat[!is.na(dat$CATEGORY),], aes(x = CATEGORY)) +
 Most common 50 journals:
 
 ```{r journal, fig.height = 8}
-dat$JOURNAL[is.na(dat$JOURNAL)] <- dat$JOURNALTITLE[is.na(dat$JOURNAL)]
+#dat$JOURNAL[is.na(dat$JOURNAL)] <- dat$JOURNALTITLE[is.na(dat$JOURNAL)]
 topjournals <- aggregate(CATEGORY ~ JOURNAL, data = dat, FUN = length)
 topjournals <- head(topjournals[order(topjournals$CATEGORY, decreasing = TRUE), ], 50)
 topjournals$JOURNAL <- factor(topjournals$JOURNAL, levels = rev(topjournals$JOURNAL))
@@ -64,7 +61,7 @@ ggplot(topjournals, aes(x = JOURNAL, y = CATEGORY)) +
 
 ## Book Publishers
 
-Most common 25 journals:
+Most common 25 publishers:
 
 ```{r publisher, fig.height = 8}
 toppublishers <- aggregate(CATEGORY ~ PUBLISHER, data = dat[dat$CATEGORY == "BOOK",], FUN = length)
@@ -85,6 +82,7 @@ Most common 50 authors:
 ```{r authors, fig.height = 8}
 aut <- unlist(dat$AUTHOR)
 topaut <- as.data.frame(head(sort(table(aut), decreasing = TRUE), 100))
+if (topaut[1,1] == "Others") topaut <- topaut[2:nrow(topaut), ]
 topaut$aut <- factor(topaut$aut, levels = rev(topaut$aut))
 ggplot(topaut[1:50, ], aes(x = aut, y = Freq)) + 
   geom_bar(stat = "identity") + 

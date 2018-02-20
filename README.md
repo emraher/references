@@ -1,6 +1,7 @@
 License: Public Domain (CC-0)
 
-This is the bibtex (.bib) file containing all of my bibliographic references. Figured I'd share it publicly.
+This is the bibtex (.bib) file containing all of my bibliographic
+references. Figured I’d share it publicly.
 
 ``` r
 library("ggplot2")
@@ -22,7 +23,8 @@ dat <- suppressWarnings(bib2df::bib2df("references.bib"))
 suppressWarnings(dat[["YEAR"]] <- as.numeric(dat[["YEAR"]]))
 ```
 
-The database contains 4098 references. What follows are some basic statistics on its contents.
+The database contains 1004 references. What follows are some basic
+statistics on its contents.
 
 Citation Types
 --------------
@@ -38,7 +40,7 @@ ggplot(dat[!is.na(dat$CATEGORY),], aes(x = CATEGORY)) +
   coord_flip()
 ```
 
-![](https://i.imgur.com/7Qgt6Lp.png)
+![](https://i.imgur.com/A91DGSa.png)
 
 Journals
 --------
@@ -46,7 +48,7 @@ Journals
 Most common 50 journals:
 
 ``` r
-dat$JOURNAL[is.na(dat$JOURNAL)] <- dat$JOURNALTITLE[is.na(dat$JOURNAL)]
+#dat$JOURNAL[is.na(dat$JOURNAL)] <- dat$JOURNALTITLE[is.na(dat$JOURNAL)]
 topjournals <- aggregate(CATEGORY ~ JOURNAL, data = dat, FUN = length)
 topjournals <- head(topjournals[order(topjournals$CATEGORY, decreasing = TRUE), ], 50)
 topjournals$JOURNAL <- factor(topjournals$JOURNAL, levels = rev(topjournals$JOURNAL))
@@ -57,12 +59,12 @@ ggplot(topjournals, aes(x = JOURNAL, y = CATEGORY)) +
   coord_flip()
 ```
 
-![](https://i.imgur.com/VN7WWxw.png)
+![](https://i.imgur.com/MYP5gaJ.png)
 
 Book Publishers
 ---------------
 
-Most common 25 journals:
+Most common 25 publishers:
 
 ``` r
 toppublishers <- aggregate(CATEGORY ~ PUBLISHER, data = dat[dat$CATEGORY == "BOOK",], FUN = length)
@@ -75,7 +77,7 @@ ggplot(toppublishers, aes(x = PUBLISHER, y = CATEGORY)) +
   coord_flip()
 ```
 
-![](https://i.imgur.com/IcYrgYa.png)
+![](https://i.imgur.com/ebQTYHr.png)
 
 Authors
 -------
@@ -85,6 +87,7 @@ Most common 50 authors:
 ``` r
 aut <- unlist(dat$AUTHOR)
 topaut <- as.data.frame(head(sort(table(aut), decreasing = TRUE), 100))
+if (topaut[1,1] == "Others") topaut <- topaut[2:nrow(topaut), ]
 topaut$aut <- factor(topaut$aut, levels = rev(topaut$aut))
 ggplot(topaut[1:50, ], aes(x = aut, y = Freq)) + 
   geom_bar(stat = "identity") + 
@@ -93,7 +96,7 @@ ggplot(topaut[1:50, ], aes(x = aut, y = Freq)) +
   coord_flip()
 ```
 
-![](https://i.imgur.com/xkrWvYJ.png)
+![](https://i.imgur.com/5D6oUZz.png)
 
 Number of coauthors per publication:
 
@@ -106,7 +109,7 @@ ggplot(dat[!is.na(dat$YEAR) & dat$YEAR > 1900, ], aes(x = YEAR, y = nauthors)) +
   ylab("Coauthors per Publication")
 ```
 
-![](https://i.imgur.com/ZBJAtuM.png)
+![](https://i.imgur.com/WdFomHH.png)
 
 Coauthorship
 ------------
@@ -128,7 +131,7 @@ ggraph::ggraph(cograph, "igraph", algorithm = "nicely") +
   theme_void()
 ```
 
-![](https://i.imgur.com/IeG7PAn.png)
+![](https://i.imgur.com/uMJHVpS.png)
 
 Betweenness centrality of top 30 authors:
 
@@ -143,7 +146,7 @@ ggplot(topcoaut, aes(x = aut, y = betweenness)) +
   coord_flip()
 ```
 
-![](https://i.imgur.com/UVTD1tc.png)
+![](https://i.imgur.com/ZZXZxmN.png)
 
 Publication Years
 -----------------
@@ -157,4 +160,4 @@ ggplot(dat[!is.na(dat$YEAR) & dat$YEAR > 1950, ], aes(x = YEAR)) +
   ylab("Count")
 ```
 
-![](https://i.imgur.com/YDFGLe8.png)
+![](https://i.imgur.com/srZdnAC.png)
